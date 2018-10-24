@@ -79,4 +79,16 @@ class PostsController extends Controller
         }
         return Redirect::to('/');
     }
+
+    public function getPostEdit($slug)
+    {
+        if (!Auth::check()){
+            return Redirect::to('/');
+        }
+
+
+        $post = Post::where('slug', $slug)->first();
+
+        return view('editar-artigo')->with('artigo', $post);
+    }
 }
