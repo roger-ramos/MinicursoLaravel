@@ -91,4 +91,38 @@ class PostsController extends Controller
 
         return view('editar-artigo')->with('artigo', $post);
     }
+
+    public function submitPostEdit(Request $request, $slug)
+    {
+        if (!Auth::check()) {
+            return Redirect::to('/');
+        }
+
+        $post = Post::where('slug', $slug)->first();
+        if(!$post || $post->author->id != Auth::id()){
+            return Redirect::to('/');
+        }
+
+        Validator::make($request->all(), [
+            'title' => 'required|max:255|unique:posts,id,'.$post->id,
+            'text' => 'required',
+            'image' => 'nullable|image'
+        ])->validate();
+
+        $post->title = $request->get('title');
+        $post->text = $request->get('text');
+        $post->slug = str_slug($request->get('title'));
+
+        if($request->has('image')){
+            if ($post->image_location){
+                Storage::disk('public')->delete($post->image_location);
+            }
+            $imagePath = Storage::disk('public')->put('posts-images', $request->file('image'));
+            $post->image_location = $imagePath;
+        }
+
+        $post->save();
+
+        return Redirect::to('/artigo/'.$post->slug);
+    }
 }

@@ -33,6 +33,8 @@ Route::get('/artigo/remover/{slug}', 'PostsController@deletePost');
 
 Route::get('/artigo/editar/{slug}', 'PostsController@getPostEdit');
 
+Route::post('/artigo/editar/{slug}', 'PostsController@submitPostEdit');
+
 Route::get('/criar-artigo', 'PostsController@createPost');
 
 Route::post('/criar-artigo', 'PostsController@postSubmit');
